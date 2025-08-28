@@ -1,0 +1,389 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>TomaSearch | Interactive Graph</title>
+        <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Trebuchet MS', monospace;
+                display: flex;
+                height: 100vh;
+                overflow-x: hidden;
+                font-size: 20px;
+            }
+
+            .sidebar {
+                background-color: #e48070;
+                width: 250px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                padding-top: 70px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: transform 0.3s ease;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+
+            .sidebar.hidden { transform: translateX(-250px); }
+
+            .nav-button {
+                background-color: rgba(255, 255, 255, 0.7);
+                color: black;
+                border: none;
+                border-radius: 10px;
+                padding: 15px 30px;
+                margin: 10px 0;
+                font-weight: bold;
+                cursor: pointer;
+                width: 80%;
+                text-align: center;
+                transition: background-color 0.3s ease;
+                font-size: 16px;
+                font-family: 'Trebuchet MS', monospace;
+            }
+
+            .nav-button:hover { background-color: rgba(255, 255, 255, 0.9); }
+
+            #sidebarToggle {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                background-color: #e48070;
+                border: none;
+                color: white;
+                padding: 10px 15px;
+                font-size: 20px;
+                cursor: pointer;
+                border-radius: 5px;
+                z-index: 1100;
+            }
+
+            @keyframes slideUpFade {
+                0% {
+                    transform: translateY(30px);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 50px;
+                flex: 1;
+                transition: margin-left 0.3s ease;
+                display: flex;
+                flex-direction: column;
+                animation: slideUpFade 0.8s ease-out;
+            }
+
+            .main-content.expanded { margin-left: 0; }
+
+            form {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+
+            label { font-weight: bold; font-size: 20px; }
+
+            input[type="text"] {
+                padding: 10px;
+                font-size: 18px;
+                width: 350px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+            }
+
+            .custom-button {
+                padding: 15px 30px;
+                font-size: 18px;
+                border: none;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: background 0.3s;
+                background-color: #e48070;
+                color: white;
+            }
+            
+            .custom-button:hover { opacity: 0.8; }
+
+            #mynetwork {
+                width: 800px;
+                height: 600px;
+                border: 1px solid lightgray;
+                background: white;
+                border-radius: 10px;
+            }
+
+            .logo-container {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+            .logo-container img {
+                max-width: 90%;
+                height: auto;
+                display: block;
+            }
+
+            .controls-section {
+                margin: 20px 0;
+                padding: 15px;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+                display: flex;
+                gap: 20px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            .controls-section label {
+                font-size: 16px;
+                font-weight: normal;
+            }
+
+            .controls-section input[type="range"],
+            .controls-section input[type="color"],
+            .controls-section input[type="number"] {
+                padding: 5px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                font-size: 16px;
+            }
+
+            .controls-section input[type="color"] {
+                width: 50px;
+                height: 30px;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Sidebar button -->
+        <button id="sidebarToggle">&#9776;</button>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <img src="{% static 'myapp/logo-wo-bg.png' %}" alt="Logo">
+            </div>
+            <button class="nav-button" onclick="location.href='{% url 'home' %}'">Home</button>
+            <button class="nav-button" onclick="location.href='{% url 'search' %}'">Search</button>
+            <button class="nav-button" onclick="location.href='{% url 'how_it_works' %}'">How it works</button>
+            <button class="nav-button" onclick="location.href='{% url 'information' %}'">Information</button>
+            <div>
+                <p style="font-size: 14px; text-align: center; opacity: 0.8;">© 2025 TomaSearch</p>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content" id="mainContent">
+            <h1>Gene visualization</h1>
+            <!-- Input form: allows the user to type a gene ID or a subgraph number -->
+            <form method="post" action=".">
+                {% csrf_token %}
+                <label for="inputText">Enter a gene (e.g.: Solyc08g080550.1) or subgraph number (from 1 to 261):</label>
+                <input type="text" id="inputText" name="inputText" value="{{ genes|default:'' }}">
+                <button type="submit" class="custom-button">Generate</button>
+            </form>
+
+            {% if vis_data %}
+            <!-- Only shown if visualization data exists -->
+            <div class="controls-section">
+                <!-- Control for adjusting the size of graph nodes -->
+                <div>
+                    <label for="nodeSize">Node Size:</label>
+                    <input type="range" id="nodeSize" min="5" max="50" value="20">
+                    <span id="nodeSizeValue">20</span>
+                </div>
+                <!-- Control for choosing node color -->
+                <div>
+                    <label for="nodeColor">Node Color:</label>
+                    <input type="color" id="nodeColor" value="#e48070">
+                </div>
+                <!-- Control for changing font size of node labels -->
+                <div>
+                    <label for="fontSize">Font Size:</label>
+                    <input type="range" id="fontSize" min="8" max="30" value="16">
+                    <span id="fontSizeValue">16</span>
+                </div>
+                <!-- Control for adjusting the thickness of edges -->
+                <div>
+                    <label for="edgeWidth">Edge Width:</label>
+                    <input type="range" id="edgeWidth" min="1" max="10" value="2">
+                    <span id="edgeWidthValue">2</span>
+                </div>
+                <!-- Control for adjusting the transparency of edges -->
+                <div>
+                    <label for="edgeOpacity">Edge Opacity:</label>
+                    <input type="range" id="edgeOpacity" min="0" max="1" step="0.1" value="1">
+                    <span id="edgeOpacityValue">1.0</span>
+                </div>
+            </div>
+
+            <!-- Layout: left panel for node info, right panel for the network visualization -->
+            <div style="display: flex; gap: 30px;">
+                <!-- Information panel: hidden until a node is clicked -->
+                <div id="nodeInfoPanel" style="width: 300px; background: #fefefe; border: 1px solid #ddd; border-radius: 10px; padding: 15px; display: none;">
+                    <h3>Node information</h3>
+                    <p>Click on a node to see its details. The threshold is 2.601457e-05.</p>
+                    <!-- Content dynamically filled with details of the selected node -->
+                    <div id="nodeInfoContent" style="font-size: 14px;"></div>
+                </div>
+
+                <div id="mynetwork"></div>
+            </div>
+
+            <button id="downloadPngBtn" class="custom-button" style="margin-top: 20px;">Download Graph as PNG</button>
+
+            <script>
+                // Initialize vis.js network
+                const parsedVisData = {{ vis_data|safe }};
+                const functionsData = {{ go_terms_data|safe }};
+                const enrichmentData = {{ enrichment_data|safe }};
+                const subgraphData = {{ subgraph_data|safe }};
+
+                const nodes = new vis.DataSet(parsedVisData.nodes);
+                const edges = new vis.DataSet(parsedVisData.edges);
+                const data = { nodes, edges };
+                const container = document.getElementById('mynetwork');
+
+                // Set initial options
+                let options = {
+                    nodes: {
+                        shape: 'dot',
+                        size: parseInt(document.getElementById('nodeSize').value),
+                        font: { size: parseInt(document.getElementById('fontSize').value), color: '#000' },
+                        color: { background: document.getElementById('nodeColor').value, border: '#b3534b' }
+                    },
+                    edges: {
+                        color: { color: 'rgba(128,128,128,1)' },
+                        width: 2,
+                        arrows: 'to'
+                    },
+                    interaction: { zoomView: true },
+                    physics: { enabled: false },
+                    configure: { enabled: false }
+                };
+
+                const network = new vis.Network(container, data, options);
+
+                // Update options based on controls
+                function updateNetworkOptions() {
+                    const newNodeSize = parseInt(document.getElementById('nodeSize').value);
+                    const newNodeColor = document.getElementById('nodeColor').value;
+                    const newFontSize = parseInt(document.getElementById('fontSize').value);
+                    const newEdgeWidth = parseInt(document.getElementById('edgeWidth').value);
+                    const newEdgeOpacity = parseFloat(document.getElementById('edgeOpacity').value);
+
+                    options.nodes.size = newNodeSize;
+                    options.nodes.color.background = newNodeColor;
+                    options.nodes.font.size = newFontSize;
+                    options.edges.width = newEdgeWidth;
+                    options.edges.color.color = `rgba(128,128,128,${newEdgeOpacity})`;
+
+                    network.setOptions(options);
+                    document.getElementById('nodeSizeValue').textContent = newNodeSize;
+                    document.getElementById('fontSizeValue').textContent = newFontSize;
+                }
+
+                ['nodeSize', 'nodeColor', 'fontSize', 'edgeWidth', 'edgeOpacity'].forEach(id => {
+                    document.getElementById(id).addEventListener('input', updateNetworkOptions);
+                });
+
+                document.getElementById('downloadPngBtn').addEventListener('click', () => {
+                    const canvas = container.querySelector('canvas');
+                    if (canvas) {
+                        const imageDataURL = canvas.toDataURL('image/png');
+                        const link = document.createElement('a');
+                        link.href = imageDataURL;
+                        link.download = 'graph.png';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    } else {
+                        alert("Graph not available for download.");
+                    }
+                });
+
+                // Show node info on click
+                network.on("selectNode", function (params) {
+                    const selectedId = params.nodes[0];
+                    const selectedNode = nodes.get(selectedId);
+                    const geneId = selectedNode.label || selectedNode.id;
+
+                    // Get functions and enrichment data for the selected gene
+                    const funcInfos = functionsData.filter(f => f.gene === geneId);
+                    const subgraphInfos = subgraphData.filter(s => s.gene === geneId);
+                    const subgraphId = subgraphInfos.length > 0 ? subgraphInfos[0].subgraph : null;
+
+                    let html = `<strong>Gene:</strong> ${geneId}<br/>`;
+
+                    if (funcInfos.length > 0) {
+                        html += `<strong>Functions:</strong><ul>`;
+                        funcInfos.forEach(f => {
+                            html += `<li>
+                                <strong>GO identifier:</strong> ${f.go_identifier || "None"}<br/>
+                                <strong>GO term:</strong> ${f.go_term || "None"}<br/>
+                                <strong>Subontology:</strong> ${f.subontology || "None"}
+                            </li>`;
+                        });
+                        html += `</ul>`;
+                    } else {
+                        html += `<strong>Functions:</strong> None<br/>`;
+                    }
+
+                    if (subgraphId) {
+                        html += `<strong>Subgraph:</strong> ${subgraphId}<br/>`;
+                    } else {
+                        html += `<strong>Subgraph:</strong> None<br/>`;
+                    }
+
+                    // Get enrichment results for the subgraph
+                    const goIds = funcInfos.map(f => f.go_identifier);
+                    const enrichmentResults = enrichmentData.filter(e =>
+                        e.subgraph === subgraphId && goIds.includes(e.go_identifier)
+                    );
+
+                    if (enrichmentResults.length > 0) {
+                        html += `<strong>Enrichment:</strong><ul>`;
+                        enrichmentResults.forEach(e => {
+                            html += `<li>${e.go_identifier} (p = ${e.p_value.toExponential(6)})</li>`;
+                        });
+                        html += `</ul>`;
+                    } else {
+                        html += `<strong>Enrichment:</strong> None`;
+                    }
+
+                    document.getElementById('nodeInfoContent').innerHTML = html;
+                    document.getElementById('nodeInfoPanel').style.display = 'block';
+                });
+
+            </script>
+            {% endif %}
+        </div>
+
+        <script>
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const toggleBtn = document.getElementById('sidebarToggle');
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('expanded');
+            });
+        </script>
+    </body>
+</html>

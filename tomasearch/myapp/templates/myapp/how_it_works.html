@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TomaSearch | How it works</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Trebuchet MS', sans-serif;
+                background-color: white;
+                color: black;
+            }
+
+            #sidebarToggle {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                background-color: #e48070;
+                border: none;
+                color: white;
+                padding: 10px 15px;
+                font-size: 20px;
+                cursor: pointer;
+                border-radius: 5px;
+                z-index: 1100;
+            }
+
+            .sidebar {
+                background-color: #e48070;
+                width: 250px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                padding-top: 70px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: transform 0.3s ease;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+
+            .sidebar.hidden {
+                transform: translateX(-250px);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .logo-container {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .logo-container img {
+                max-width: 90%;
+                height: auto;
+                display: block;
+            }
+
+            .nav-button {
+                background-color: rgba(255, 255, 255, 0.7);
+                color: black;
+                border: none;
+                border-radius: 10px;
+                padding: 15px 30px;
+                margin: 10px 0;
+                font-weight: bold;
+                cursor: pointer;
+                width: 80%;
+                text-align: center;
+                transition: background-color 0.3s ease;
+                font-size: 16px;
+                font-family: 'Trebuchet MS', monospace;
+            }
+
+            .nav-button:hover {
+                background-color: rgba(255, 255, 255, 0.9);
+            }
+
+            @keyframes fadeInUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .main-content {
+                padding: 2rem;
+                margin-left: 0;
+                transition: margin-left 0.3s ease;
+                animation: fadeInUp 0.8s ease-out;
+            }
+
+            .main-content.shifted {
+                margin-left: 250px;
+            }
+
+            .page-title {
+                text-align: center;
+                font-size: 4rem;
+                font-weight: bold;
+                margin-bottom: 2rem;
+                animation: fadeInUp 0.8s ease-out;
+            }
+
+            .container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+
+            .panel {
+                flex: 1 1 45%;
+                padding: 2rem;
+                box-sizing: border-box;
+                animation: fadeInUp 0.8s ease-out;
+            }
+
+            .left-panel {
+                background-color: #e48070;
+                color: white;
+                border-radius: 8px;
+                animation-delay: 0.2s;
+                animation-fill-mode: both;
+            }
+
+            .right-panel {
+                background-color: white;
+                color: black;
+                border: 2px solid #e48070;
+                border-radius: 8px;
+                animation-delay: 0.4s;
+                animation-fill-mode: both;
+            }
+
+            .panel h1 {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+
+            .panel h2 {
+                font-size: 1.2rem;
+                margin-top: 1rem;
+            }
+
+            .panel p, .panel ul {
+                font-size: 1.2rem;
+                line-height: 1.4;
+            }
+
+            ul {
+                padding-left: 1.5rem;
+            }
+
+            .note {
+                font-size: 0.9rem;
+                background-color: rgba(255, 255, 255, 0.2);
+                padding: 0.5rem;
+                border-left: 4px solid white;
+                border-radius: 4px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- Sidebar button -->
+        <button id="sidebarToggle">&#9776;</button>
+
+        <!-- Sidebar -->
+        <div class="sidebar open" id="sidebar">
+            <div class="logo-container">
+                <img src="{% static 'myapp/logo-wo-bg.png' %}" alt="Logo">
+            </div>
+            <button class="nav-button" onclick="location.href='{% url 'home' %}'">Home</button>
+            <button class="nav-button" onclick="location.href='{% url 'search' %}'">Search</button>
+            <button class="nav-button" onclick="location.href='{% url 'images' %}'">Images</button>
+            <button class="nav-button" onclick="location.href='{% url 'information' %}'">Information</button>
+            <div>
+                <p style="font-size: 14px; text-align: center; opacity: 0.8;">© 2025 TomaSearch</p>
+            </div>    
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content shifted" id="mainContent">
+            <div class="page-title">How it works</div>
+            <div class="container">
+
+                <!-- Search -->
+                <div class="panel left-panel">
+                    <h1>🔍 Search</h1>
+                    <p>You can perform <strong>four types of searches</strong> to explore the tomato database:</p>
+
+                    <h2>1. Search by gene</h2>
+                    <p>Enter one or more genes (<strong>Solyc00g000000.0</strong>), separated by commas. Select the columns to display:</p>
+                    <ul>
+                        <li>GO identifier</li>
+                        <li>GO term</li>
+                        <li>Subontology</li>
+                        <li>Subgraph</li>
+                    </ul>
+
+                    <h2>2. Search by GO identifier</h2>
+                    <p>Enter one or more GO IDs (<strong>GO:0000000</strong>), separated by commas. Optional columns:</p>
+                    <ul>
+                        <li>GO term</li>
+                        <li>Subontology</li>
+                        <li>Subgraph</li>
+                    </ul>
+
+                    <h2>3. Search by GO term</h2>
+                    <p>Search ontology terms (e.g., <em>photosynthesis</em>, <em>membrane</em>). Partial matches are included. Optional columns:</p>
+                    <ul>
+                        <li>GO identifier</li>
+                        <li>Subontology</li>
+                        <li>Subgraph</li>
+                    </ul>
+
+                    <h2>4. Search by subontology</h2>
+                    <p>Filter by one of:</p>
+                    <ul>
+                        <li>Cellular component</li>
+                        <li>Biological process</li>
+                        <li>Molecular function</li>
+                    </ul>
+
+                    <p class="note">If you select <strong>GO identifier</strong> and <strong>Subgraph</strong>, enrichment and p-value data will be shown (threshold: 2.601457e-05).</p>
+                </div>
+
+                <!-- Images -->
+                <div class="panel right-panel">
+                    <h1>🖼 Images</h1>
+                    <p>Generate <strong>graphs (subgraphs)</strong> by entering a gene (<strong>Solyc00g000000.0</strong>) or subgraph number (1–261).</p>
+                    <p>Subgraphs come from an adjacency matrix filtered by Pearson correlation ≥ 0.9.</p>
+
+                    <h2>Visualization</h2>
+                    <p>If a subgraph is large, visualization may be dense. Clicking a node shows:</p>
+                    <ul>
+                        <li>Gene name</li>
+                        <li>GO identifiers</li>
+                        <li>GO terms</li>
+                        <li>Subontologies</li>
+                        <li>Subgraph number</li>
+                        <li>Enrichment</li>
+                        <li>p-value</li>
+                    </ul>
+
+                    <h2>Customization</h2>
+                    <ul>
+                        <li>Node Size</li>
+                        <li>Node Color</li>
+                        <li>Font Size</li>
+                        <li>Edge Width</li>
+                        <li>Edge Opacity</li>
+                    </ul>
+
+                    <p class="note">📥 Tables can be downloaded as CSV and graphs as PNG.</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                mainContent.classList.toggle('shifted');
+            });
+        </script>
+
+    </body>
+</html>
