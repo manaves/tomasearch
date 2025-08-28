@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TomaSearch</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Trebuchet MS', monospace;
+            }
+
+            .container {
+                display: flex;
+                min-height: 100vh;
+            }
+
+            @keyframes fadeUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .left-panel {
+                flex: 1;
+                background-color: #e48070;
+                color: white;
+                padding: 2rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                text-align: center;
+            }
+
+            .logo {
+                max-width: 80%;
+                height: auto;
+                margin-bottom: 1rem;
+                background-color: transparent;
+                filter: drop-shadow(0 0 6px rgba(0,0,0,0.3));
+                animation: fadeUp 0.8s ease-out forwards;
+            }
+
+            .description {
+                font-size: 25px;
+                line-height: 1.5;
+                max-width: 90%;
+                opacity: 0;
+                animation: fadeUp 0.8s ease-out forwards;
+                animation-delay: 0.3s;
+            }
+
+            .description p {
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            .desc-title {
+                font-size: 32px;
+                font-weight: bold;
+                margin-bottom: 1rem;
+            }
+
+            .desc-text {
+                font-size: 20px;
+                line-height: 1.2;
+                margin: 0.3rem 0;
+            }
+
+            .buttons {
+                margin-top: 2rem;
+            }
+
+            .btn {
+                background-color: white;
+                color: black;
+                padding: 0.7rem 1.2rem;
+                border: none;
+                border-radius: 12px;
+                font-size: 1rem;
+                font-weight: bold;
+                cursor: pointer;
+                margin-right: 1rem;
+                opacity: 0;
+                animation: fadeUp 0.8s ease-out forwards;
+            }
+
+            .buttons .btn:nth-child(1) {
+                animation-delay: 0.6s;
+            }
+
+            .buttons .btn:nth-child(2) {
+                animation-delay: 0.8s;
+            }
+
+            .right-panel {
+                flex: 1;
+                background-color: white;
+                padding: 2rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+            }
+
+            .big-btn {
+                background-color: #e48070;
+                color: white;
+                font-size: 1.2rem;
+                font-weight: bold;
+                padding: 2rem;
+                border: none;
+                border-radius: 40px;
+                width: 60%;
+                text-align: center;
+                cursor: pointer;
+                opacity: 0;
+                animation: fadeUp 0.8s ease-out forwards;
+            }
+
+            .right-panel .big-btn:nth-child(1) {
+                animation-delay: 1.1s;
+            }
+            
+            .right-panel .big-btn:nth-child(2) {
+                animation-delay: 1.3s;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="left-panel">
+                <div>
+                    <img src="{% static 'myapp/logo-wo-bg.png' %}" alt="TomaSearch Logo" class="logo">
+                    <div class="description">
+                        <p class="desc-title">Welcome to TomaSearch viewer.</p>
+                        <p class="desc-text">Explore your tomato database effortlessly with our intuitive viewer.</p>
+                        <p class="desc-text">Navigate through tables to get information about co-expression networks.</p>
+                        <p class="desc-text">Search for specific terms, view images, and download data in CSV format.</p>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="btn" onclick="location.href='{% url 'how_it_works' %}'">How it works</button>
+                    <button class="btn" onclick="location.href='{% url 'information' %}'">Information</button>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <button class="big-btn" onclick="location.href='{% url 'search' %}'">SEARCH</button>
+                <button class="big-btn" onclick="location.href='{% url 'images' %}'">IMAGES</button>
+            </div>
+        </div>
+    </body>
+</html>
