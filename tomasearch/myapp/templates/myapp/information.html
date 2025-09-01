@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TomaSearch | Information</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Trebuchet MS', sans-serif;
+                background-color: white;
+                color: black;
+            }
+
+            #sidebarToggle {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                background-color: #e48070;
+                border: none;
+                color: white;
+                padding: 10px 15px;
+                font-size: 20px;
+                cursor: pointer;
+                border-radius: 5px;
+                z-index: 1100;
+            }
+
+            .sidebar {
+                background-color: #e48070;
+                width: 250px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                padding-top: 70px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: transform 0.3s ease;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+
+            .sidebar.hidden {
+                transform: translateX(-250px);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .logo-container {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .logo-container img {
+                max-width: 90%;
+                height: auto;
+                display: block;
+            }
+
+            .nav-button {
+                background-color: rgba(255, 255, 255, 0.7);
+                color: black;
+                border: none;
+                border-radius: 10px;
+                padding: 15px 30px;
+                margin: 10px 0;
+                font-weight: bold;
+                cursor: pointer;
+                width: 80%;
+                text-align: center;
+                transition: background-color 0.3s ease;
+                font-size: 16px;
+                font-family: 'Trebuchet MS', monospace;
+            }
+
+            .nav-button:hover {
+                background-color: rgba(255, 255, 255, 0.9);
+            }
+
+            @keyframes fadeInUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .main-content {
+                padding: 2rem;
+                margin-left: 0;
+                transition: margin-left 0.3s ease;
+                animation: fadeInUp 0.8s ease-out;
+            }
+
+            .main-content.shifted {
+                margin-left: 250px;
+            }
+
+            .page-title {
+                text-align: center;
+                font-size: 4rem;
+                font-weight: bold;
+                margin-bottom: 2rem;
+                animation: fadeInUp 0.8s ease-out;
+            }
+
+            .container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+
+            .panel {
+                flex: 1 1 45%;
+                padding: 2rem;
+                box-sizing: border-box;
+                animation: fadeInUp 0.8s ease-out;
+            }
+
+            .left-panel {
+                background-color: #e48070;
+                color: white;
+                border-radius: 8px;
+                animation-delay: 0.2s;
+                animation-fill-mode: both;
+            }
+
+            .right-panel {
+                background-color: white;
+                color: black;
+                border: 2px solid #e48070;
+                border-radius: 8px;
+                animation-delay: 0.4s;
+                animation-fill-mode: both;
+            }
+
+            .panel h1 {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+
+            .panel h2 {
+                font-size: 1.2rem;
+                margin-top: 1rem;
+            }
+
+            .panel p, .panel ul {
+                font-size: 1.2rem;
+                line-height: 1.4;
+            }
+
+            ul {
+                padding-left: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 28px;
+                font-weight: bold;
+                margin-bottom: 1rem;
+            }
+
+            .section-text {
+                font-size: 18px;
+                line-height: 1.4;
+                margin-bottom: 1.2rem;
+                text-align: justify;
+            }
+
+            .tool-title {
+                font-size: 20px;
+                font-weight: bold;
+                margin-top: 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Sidebar button -->
+        <button id="sidebarToggle">&#9776;</button>
+
+        <!-- Sidebar -->
+        <div class="sidebar open" id="sidebar">
+            <div class="logo-container">
+                <img src="{% static 'myapp/logo-wo-bg.png' %}" alt="Logo">
+            </div>
+            <button class="nav-button" onclick="location.href='{% url 'home' %}'">Home</button>
+            <button class="nav-button" onclick="location.href='{% url 'search' %}'">Search</button>
+            <button class="nav-button" onclick="location.href='{% url 'images' %}'">Images</button>
+            <button class="nav-button" onclick="location.href='{% url 'how_it_works' %}'">How it works</button>
+            <div>
+                <p style="font-size: 14px; text-align: center; opacity: 0.8;">© 2025 TomaSearch</p>
+            </div>
+        </div>
+
+        <!-- Principal content -->
+        <div class="main-content shifted" id="mainContent">
+            <div class="page-title">Important information</div>
+            <div class="container">
+
+                <!-- Search -->
+                <div class="panel left-panel">
+                    <h1 class="section-title">How was the data collected?</h1>
+                    <p class="section-text">The RNA-seq data used were obtained from the Sequence Read Archive (SRA) database, which contains high-throughput sequencing data.</p>
+                    <p class="section-text">The <a href="https://res.cloudinary.com/doa1txwbo/raw/upload/fl_attachment/SRA-IDs_hggzkh.txt" download>downloadable file</a> contains the 310 access numbers of the samples used for analysis. All samples used belong to the tomato (Solanum lycopersicum) and have been sequenced using the Illumina platform.</p>
+                    <p class="section-text">Different types of tissue were used for the analysis. The largest number of samples came from the root (28.06%), followed by the leaves (20%), shoots (16.13%), and seeds (13.23%). For the rest of the tissues, the percentage is less than 10%. Of the 310 samples used, 32.26% belong to paired-end reads and 67.74% to single-end reads.</p>
+                </div>
+
+                <!-- Images -->
+                <div class="panel right-panel">
+                    <h1 class="section-title">Data Processing and Analysis</h1>
+                    <p class="section-text">To process and analyze the sequencing data, a combination of widely used bioinformatics tools and custom scripts was employed. Each software was selected based on its suitability for specific steps of the workflow, ensuring both accuracy and efficiency.</p>
+
+                    <p class="tool-title">FastP</p>
+                    <p class="section-text">Used for preprocessing raw reads by trimming adapters, filtering low-quality data, and improving overall read quality.</p>
+
+                    <p class="tool-title">HISAT2</p>
+                    <p class="section-text">Applied to align RNA-seq reads to the tomato reference genome, optimized for spliced alignments and transcriptomic data.</p>
+
+                    <p class="tool-title">SAMtools</p>
+                    <p class="section-text">Employed for manipulating alignment files, including compression, sorting, and indexing for downstream analyses.</p>
+
+                    <p class="tool-title">Tablet</p>
+                    <p class="section-text">Provided an interactive environment to visually inspect alignments and confirm strand-specific information.</p>
+
+                    <p class="tool-title">StringTie</p>
+                    <p class="section-text">Used for transcript assembly and quantification, enabling the identification of expressed isoforms and estimation of gene abundances.</p>
+
+                    <p class="tool-title">Cluster3.0</p>
+                    <p class="section-text">Applied to explore gene expression patterns through filtering, normalization, and clustering of expression tables.</p>
+
+                    <p class="tool-title">Python Scripts</p>
+                    <p class="section-text">Custom scripts supported additional analyses, using libraries such as NumPy, Pandas, Matplotlib, Seaborn, NetworkX, GOAtools, and SciPy for data handling, visualization, graph analysis, and enrichment studies.</p>
+
+                    <p class="tool-title">Statistical Tests</p>
+                    <p class="section-text">Fisher’s exact test and Bonferroni correction were applied to validate enrichment results and minimize false positives.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                mainContent.classList.toggle('shifted');
+            });
+        </script>
+
+    </body>
+</html>
