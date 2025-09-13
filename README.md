@@ -12,7 +12,7 @@ Explore your tomato database effortlessly with our intuitive viewer. Navigate th
 
 In this section, you will find important information about how the data was collected, processed, and analyzed before being displayed on the website.
 
-![Information](readme_images/information.png)
+![Information](https://drive.google.com/uc?export=view&id=1qaYN1VqXKpcBSazmpRm_wY4LhiuB-0Uz)
 
 ---
 
@@ -20,7 +20,7 @@ In this section, you will find important information about how the data was coll
 
 This section explains how to use both the **Search** and **Images** sections of the application. Follow the instructions provided on the interface to explore the data efficiently.
 
-![HowItWorks](readme_images/how_it_works.png)
+![HowItWorks](https://drive.google.com/uc?export=view&id=1q91NcM9yfYmEZcbFvqZKLblWtLRtDn3D)
 
 ---
 
@@ -35,8 +35,8 @@ The **Search** section allows you to query the database by:
 
 You can view the results in a table and download the information in CSV format.
 
-![Search](readme_images/search.png)  
-![Results Table](readme_images/results_table.png)
+![Search](https://drive.google.com/uc?export=view&id=15vNQHMb7bvMVI-z0SfMvtOPGSIsxsSOn) 
+![ResultsTable](https://drive.google.com/uc?export=view&id=11jXCfuxlOxRUHK1Z8bT6iqrGkQYab9Fk)
 
 ---
 
@@ -44,6 +44,6 @@ You can view the results in a table and download the information in CSV format.
 
 In the **Images** section, you can visualize the relationships between genes in a subgraph.
 
-![Gene Network](readme_images/images.png)
+![GeneNetwork](https://drive.google.com/uc?export=view&id=1mqAYFMtLl4Xs_K5wZ-u4-cHAtg0rdaJp)
 
 ---
