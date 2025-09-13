@@ -4,7 +4,7 @@ Explore your tomato database effortlessly with our intuitive viewer. Navigate th
 
 > **Note:** The database information is private, so you cannot run this code with the provided data. You can connect your own database if the tables have the same structure (column names and types).
 
-![Home](https://drive.google.com/file/d/17E35LeUQQSV0AcvC9IyFAEWP0Qi00J9W/view?usp=sharing)
+![Home](https://drive.google.com/file/d/17E35LeUQQSV0AcvC9IyFAEWP0Qi00J9W)
 
 ---
 
