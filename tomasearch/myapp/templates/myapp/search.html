@@ -1,0 +1,322 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>TomaSearch | Search</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Trebuchet MS', monospace;
+                display: flex;
+                height: 100vh;
+                overflow-x: hidden;
+                font-size: 20px;
+            }
+
+            .sidebar {
+                background-color: #e48070;
+                width: 250px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                padding-top: 70px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: transform 0.3s ease;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+
+            .sidebar.hidden {
+                transform: translateX(-250px);
+            }
+
+            .nav-button {
+                background-color: rgba(255, 255, 255, 0.7);
+                color: black;
+                border: none;
+                border-radius: 10px;
+                padding: 15px 30px;
+                margin: 10px 0;
+                font-weight: bold;
+                cursor: pointer;
+                width: 80%;
+                text-align: center;
+                transition: background-color 0.3s ease;
+                font-size: 16px;
+                font-family: 'Trebuchet MS', monospace;
+            }
+
+            .nav-button:hover {
+                background-color: rgba(255, 255, 255, 0.9);
+            }
+
+            #sidebarToggle {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                background-color: #e48070;
+                border: none;
+                color: white;
+                padding: 10px 15px;
+                font-size: 20px;
+                cursor: pointer;
+                border-radius: 5px;
+                z-index: 1100;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 50px;
+                flex: 1;
+                transition: margin-left 0.3s ease;
+            }
+
+            .main-content.expanded {
+                margin-left: 0;
+            }
+
+            .form-container {
+                max-width: 800px;
+                margin: 40px auto;
+                padding: 0 20px;
+            }
+
+            .fade-in {
+                opacity: 0;
+                animation: fadeIn 1s ease-in forwards;
+            }
+
+            @keyframes fadeIn {
+                to {
+                    opacity: 1;
+                }
+            }
+
+            .textarea-grande {
+                width: 100%;
+                height: 200px;
+                padding: 10px;
+                font-size: 1rem;
+                box-sizing: border-box;
+                resize: vertical;
+            }
+
+            .checkbox-group,
+            .checkbox-group2 {
+                margin-top: 20px;
+            }
+
+            .submit-btn {
+                margin-top: 20px;
+                padding: 10px 20px;
+                font-size: 1rem;
+                cursor: pointer;
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            .button-table {
+                display: flex;
+                justify-content: flex-start;
+                gap: 15px;
+                margin-top: 15px;
+                flex-wrap: nowrap;
+            }
+
+            .select-btn {
+                background-color: #f2f2f2;
+                padding: 15px 30px;
+                border-radius: 10px;
+                font-weight: bold;
+                text-align: center;
+                cursor: pointer;
+                transition: background-color 0.3s ease, box-shadow 0.2s ease;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
+            img {
+            background-color: transparent;
+            }
+
+            .select-btn:hover {
+                background-color: #ddd;
+            }
+
+            .select-btn.active {
+                background-color: #e48070;
+                color: white;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            }
+
+            .selector-group {
+                margin-bottom: 30px;
+                text-align: left;
+            }
+
+            #form-gene,
+            #form-go-identifier,
+            #form-go-terms,
+            #form-subontology {
+                margin-top: 20px;
+            }
+
+            .logo-container {
+                /*background: transparent;*/
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .logo-container img {
+                max-width: 90%;
+                height: auto;
+                /*background: transparent;*/
+                display: block;
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <!-- Sidebar button -->
+        <button id="sidebarToggle">&#9776;</button>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <img src="{% static 'myapp/logo-wo-bg.png' %}" alt="Logo">
+            </div>
+            <button class="nav-button" onclick="location.href='{% url 'home' %}'">Home</button>
+            <button class="nav-button" onclick="location.href='{% url 'images' %}'">Images</button>
+            <button class="nav-button" onclick="location.href='{% url 'how_it_works'%}'">How it works</button>
+            <button class="nav-button" onclick="location.href='{% url 'information'%}'">Information</button>
+            <div>
+                <p style="font-size: 14px; text-align: center; opacity: 0.8;">© 2025 TomaSearch</p>
+            </div>
+        </div>
+
+        <!-- Principal content -->
+        <div class="main-content" id="mainContent">
+            <h1>Search</h1>
+            <div class="form-container">
+                <!-- Selector -->
+                <div class="selector-group fade-in">
+                    <label>Select search type:</label>
+                    <div class="button-table">
+                        <div class="select-btn" onclick="selectSearch('gene')">Search by gene</div>
+                        <div class="select-btn" onclick="selectSearch('go_identifier')">Search by GO identifier</div>
+                        <div class="select-btn" onclick="selectSearch('go_term')">Search by GO term</div>
+                        <div class="select-btn" onclick="selectSearch('subontology')">Search by subontology</div>
+                    </div>
+                </div>
+
+                <!-- Form 1 - Search by genes -->
+                <div id="form-gene" class="hidden">
+                    <form method="post" action="{% url 'search_gene' %}" target="_blank">
+                        {% csrf_token %}
+                        <label for="inputText">Enter the gene or genes (e.g.: Solyc08g080550.1; if there is more than one, they must be separated by “,”):</label><br>
+                        <textarea id="inputText" name="inputText" class="textarea-grande"></textarea><br><br>
+
+                        <div class="checkbox-group">
+                            <label>Select the columns you want to display:</label><br>
+                            <input type="checkbox" id="g1" name="options" value="1"><label for="g1">GO identifier</label><br>
+                            <input type="checkbox" id="g2" name="options" value="2"><label for="g2">GO term</label><br>
+                            <input type="checkbox" id="g3" name="options" value="3"><label for="g3">Subontology</label><br>
+                            <input type="checkbox" id="g4" name="options" value="4"><label for="g4">Subgraph</label><br>
+                        </div>
+
+                        <input type="submit" value="Go" class="submit-btn">
+                    </form>
+                </div>
+
+                <!-- Form 2 - Search by GO identifiers -->
+                <div id="form-go_identifier" class="hidden">
+                    <form method="post" action="{% url 'search_go_identifier' %}" target="_blank">
+                        {% csrf_token %}
+                        <label for="inputTextGo">Enter the GO identifiers (format GO:0000000; if there is more than one, they must be separated by “,”):</label><br>
+                        <textarea id="inputTextGo" name="inputText" class="textarea-grande"></textarea><br><br>
+
+                        <div class="checkbox-group">
+                            <label>Select the columns you want to display:</label><br>
+                            <input type="checkbox" id="go1" name="options" value="1"><label for="go1">GO term</label><br>
+                            <input type="checkbox" id="go2" name="options" value="2"><label for="go2">Subontology</label><br>
+                            <input type="checkbox" id="go3" name="options" value="3"><label for="go3">Subgraph</label><br>
+                        </div>
+
+                        <input type="submit" value="Go" class="submit-btn">
+                    </form>
+                </div>
+
+                <!-- Form 3 - Search by GO terms -->
+                <div id="form-go_term" class="hidden">
+                    <form method="post" action="{% url 'search_go_term' %}" target="_blank">
+                        {% csrf_token %}
+                        <label for="inputText">Enter the GO terms (if there is more than one, they must be separated by “,”):</label><br>
+                        <textarea id="inputText" name="inputText" class="textarea-grande"></textarea><br><br>
+
+                        <div class="checkbox-group">
+                            <label>Select the columns you want to display:</label><br>
+                            <input type="checkbox" id="f1" name="options" value="1"><label for="f1">GO identifier</label><br>
+                            <input type="checkbox" id="f2" name="options" value="2"><label for="f2">Subontology</label><br>
+                            <input type="checkbox" id="f3" name="options" value="3"><label for="f3">Subgraph</label><br>
+                        </div>
+
+                        <input type="submit" value="Go" class="submit-btn">
+                    </form>
+                </div>
+
+                <!-- Form 4 - Search by subontologies -->
+                <div id="form-subontology" class="hidden">
+                    <form method="post" action="{% url 'search_subontology' %}" target="_blank">
+                        {% csrf_token %}
+                        <div class="checkbox-group-subontology">
+                            <label>Select the subontology you want to search by:</label><br>
+                            <input type="checkbox" id="op1" name="options_subontology" value="1"><label for="op1">Cellular component</label><br>
+                            <input type="checkbox" id="op2" name="options_subontology" value="2"><label for="op2">Biological process</label><br>
+                            <input type="checkbox" id="op3" name="options_subontology" value="3"><label for="op3">Molecular function</label><br>
+                        </div>
+
+                        <div class="checkbox-group2">
+                            <label>Select the columns you want to display:</label><br>
+                            <input type="checkbox" id="a1" name="options" value="1"><label for="a1">GO identifier</label><br>
+                            <input type="checkbox" id="a2" name="options" value="2"><label for="a2">GO term</label><br>
+                            <input type="checkbox" id="a3" name="options" value="3"><label for="a3">Subgraph</label><br>
+                        </div>
+
+                        <input type="submit" value="Go" class="submit-btn">
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interaction script -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const toggleBtn = document.getElementById('sidebarToggle');
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('expanded');
+            });
+
+            window.selectSearch = function (selectedForm) {
+                document.querySelectorAll('.select-btn').forEach(btn => btn.classList.remove('active'));
+                const forms = ['gene', 'go_identifier', 'go_term', 'subontology'];
+                forms.forEach(form => document.getElementById(`form-${form}`).classList.add('hidden'));
+
+                document.querySelector(`.select-btn[onclick*="${selectedForm}"]`).classList.add('active');
+                document.getElementById(`form-${selectedForm}`).classList.remove('hidden');
+            }
+        });
+        </script>
+    </body>
+</html>
