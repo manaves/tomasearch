@@ -214,3 +214,4 @@ tomasearch/myapp/graphs/*
 tomasearch/myapp/templates/myapp/table_data.html
 tomasearch/myapp/templates/myapp/tables.html
 tomasearch/myapp/migrations/*
+tomasearch/readme_images/*
