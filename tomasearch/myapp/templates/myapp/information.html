@@ -43,9 +43,7 @@
                 z-index: 1000;
             }
 
-            .sidebar.hidden {
-                transform: translateX(-250px);
-            }
+            .sidebar.hidden { transform: translateX(-250px); }
 
             .sidebar.open {
                 left: 0;
@@ -252,8 +250,8 @@
             const mainContent = document.getElementById('mainContent');
 
             sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                mainContent.classList.toggle('shifted');
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('expanded');
             });
         </script>
 
