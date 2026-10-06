@@ -16,9 +16,9 @@ Explore your tomato database effortlessly with our intuitive viewer. Navigate th
 
 ## Demo
 
-Watch the full walkthrough of TomaSearch:
+Watch the full walkthrough of TomaSearch. Click the thumbnail below to play it on YouTube:
 
-**[▶ Watch the demo video](https://drive.google.com/file/d/13yCksiKVdKRH66aFb2gJGlF_FAx1Rq8V/view?usp=drive_link)**
+[![Watch the TomaSearch demo video](https://img.youtube.com/vi/sicuC1XOn84/maxresdefault.jpg)](https://youtu.be/sicuC1XOn84)
 
 ---
 
